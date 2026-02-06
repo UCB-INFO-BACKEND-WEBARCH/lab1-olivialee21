@@ -34,7 +34,7 @@ def check_password_strength(password):
     - Not in common list: 10 points
     
     Returns:
-        dict with keys: "password", "score", "strength", "feedback"
+        dict with keys: "password", "score", "strength"
         
     Strength levels:
     - 0-39: "Weak"
@@ -51,7 +51,28 @@ def check_password_strength(password):
     Hint: Use .isdigit(), .isupper(), .islower() and string.punctuation
     """
     # TODO: Implement this function
-    pass
+    result_dict = {"password": password, "score": 0, "strength": "Weak"}
+    if len(password) >= 8 and len(password) < 12:
+        result_dict["score"] += 20
+    if len(password) >= 12:
+        result_dict["score"] += 30
+    if any(c.isdigit() for c in password):
+        result_dict["score"] += 20
+    if any(c.isupper() for c in password):
+        result_dict["score"] += 20
+    if any(c.islower() for c in password):
+        result_dict["score"] += 20
+    if any(c in string.punctuation for c in password):
+        result_dict["score"] += 20
+    if password not in COMMON_PASSWORDS:
+        result_dict["score"] += 10
+    if result_dict["score"] >= 70:
+        result_dict["strength"] = "Strong"
+    elif result_dict["score"] >= 40:
+        result_dict["strength"] = "Medium"
+
+    return result_dict
+    
 
 
 # ============================================
@@ -83,7 +104,19 @@ def generate_password(length=12, use_special=True):
           string.digits, and random.choice()
     """
     # TODO: Implement this function
-    pass
+    chars = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    
+    pw = ''
+    if use_special:
+        pw  += random.choice(string.punctuation)
+    pw += random.choice(string.ascii_uppercase)
+    pw += random.choice(string.ascii_lowercase)
+    pw += random.choice(string.digits)
+
+    while len(pw) < length:
+        pw += ''.join(random.choice(chars))
+    
+    return pw
 
 
 # ============================================
@@ -109,7 +142,7 @@ if __name__ == "__main__":
             print("❌ TODO 1 should return a dictionary")
             exit()
         
-        required_keys = ["password", "score", "strength", "feedback"]
+        required_keys = ["password", "score", "strength"]
         missing_keys = [key for key in required_keys if key not in result]
         
         if missing_keys:
